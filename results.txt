@@ -1,0 +1,6 @@
+node id 1 , value function 6 , path [1, 2, 4, 3, 5]
+node id 2 , value function 4 , path [2, 4, 3, 5]
+node id 3 , value function 0 , path [3, 5]
+node id 4 , value function 1 , path [4, 3, 5]
+node id 5 , value function 0 , path [5]
+node id 6 , value function 2 , path [6, 5]
