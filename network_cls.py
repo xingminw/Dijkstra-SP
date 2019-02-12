@@ -27,14 +27,6 @@ class Network(object):
             if self.remaining_set is None:
                 self.remaining_set = []
             self.remaining_set.append(node_id)
-        #
-        # for node_id in self.remaining_set:
-        #     node = self.nodes[node_id]
-        #     if not (self.dest_node in node.dest_nodes.keys()):
-        #         self.nodes[node_id].value_function = 100000
-        #     else:
-        #         self.nodes[node_id].value_function = node.dest_nodes[self.dest_node]
-        #     self.nodes[node_id].best_path = [self.dest_node]
 
     def update(self):
         for node_id in self.remaining_set:
@@ -60,16 +52,38 @@ class Network(object):
             self.nodes[node_id].value_function = minimum_value
             if self.nodes[node_id].best_path is None:
                 self.nodes[node_id].best_path = []
-            self.nodes[node_id].best_path = [best_dest_node] + self.nodes[node_id].best_path
+            self.nodes[node_id].best_path = [node_id] + self.nodes[best_dest_node].best_path
 
         # select the new fixed node
+        candidate_id = []
+        candidate_val = []
         for node_id in self.remaining_set:
             node = self.nodes[node_id]
+            node_value = node.value_function
+            if node_value is None:
+                continue
+            else:
+                candidate_id.append(node_id)
+                candidate_val.append(node_value)
+        chosen_node_id = candidate_id[int(np.argmin(candidate_val))]
 
+        self.fixed_set.append(chosen_node_id)
+        update_remaining_set = []
+        for node_id in self.remaining_set:
+            if node_id in self.fixed_set:
+                continue
+            update_remaining_set.append(node_id)
+        self.remaining_set = update_remaining_set
+
+    def run(self):
+        while True:
+            self.update()
+            if len(self.remaining_set) == 0:
+                break
 
     def output_value_function(self):
-        print("Fixed set", self.fixed_set)
-        print("Remaining set", self.remaining_set)
+        print("Fixed set:", self.fixed_set)
+        print("Remaining set:", self.remaining_set)
         for node_id in self.nodes.keys():
             node = self.nodes[node_id]
             value_function = node.value_function
